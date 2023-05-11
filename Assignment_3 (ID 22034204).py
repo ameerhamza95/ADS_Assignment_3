@@ -65,3 +65,78 @@ def read_world_health_data(filename):
     # Return both dataframes
     return years, countries
 
+def subset_indicators(ghg_countries_df, forest_countries_df):
+    """
+    Subset the input dataframes to include only for years 1990, 
+    2000, 2010, and 2019, drop NaN values, and return the 
+    resulting dataframes.
+
+    Parameters:
+    -----------
+    ghg_countries_df, forest_countries_df) : pandas.DataFrames
+        Dataframes with multi-indexed rows with country names 
+        and indicator names and year columns as datetime format.
+
+    Returns:
+    --------
+    pandas.DataFrame
+        Dataframe containing the emissions indicator for years 
+        1990, 2000, 2010, and 2019.
+
+    pandas.DataFrame
+        Dataframe containing the forest indicator for years 
+        1990, 2000, 2010, and 2019.
+    """
+    # Subset the dataframe to include only the emissions indicator
+    emissions = ghg_countries_df.copy()
+
+    # Drop rows and columns with all NaN values
+    emissions = emissions.dropna(axis=0, how='all')
+    emissions = emissions.dropna(axis=1, how='all')
+
+    # Drop rows that have NaN values for all years
+    emissions = emissions[emissions[1990].notna()]
+    emissions = emissions[emissions[2000].notna()]
+    emissions = emissions[emissions[2010].notna()]
+    emissions = emissions[emissions[2019].notna()]
+
+    # Subset the dataframe to include only the renewable indicator
+    forest = forest_countries_df.copy()
+
+    # Drop rows and columns with all NaN values
+    forest = forest.dropna(axis=0, how='all')
+    forest = forest.dropna(axis=1, how='all')
+
+    # Drop rows that have NaN values for any of the years
+    forest = forest.dropna(subset=[1990, 2000, 2010, 2019])
+
+    # Keep only the years 1990, 2000, 2010, and 2019 for both dataframes
+    emissions = emissions[[1990, 2000, 2010, 2019]].copy()
+    forest = forest[[1990, 2000, 2010, 2019]].copy()
+
+    # Return both dataframes
+    return forest, emissions
+
+def merge_dataframes(df1, df2, suffix1, suffix2):
+    """
+    Merge two dataframes on 'Country Name' column with given suffixes.
+
+    Args:
+    df1 (pd.DataFrame): First dataframe to be merged.
+    df2 (pd.DataFrame): Second dataframe to be merged.
+    suffix1 (str): Suffix to be added to column names of df1.
+    suffix2 (str): Suffix to be added to column names of df2.
+
+    Returns:
+    pd.DataFrame: Merged dataframe with suffixes.
+    """
+    # Merge the two dataframes on 'Country Name' column with 
+    # the given suffixes for the corresponding columns
+    merged_df = pd.merge(df1, df2, on='Country Name', how='outer'\
+                         , suffixes=[suffix1, suffix2])
+
+    # Drop rows with NaN values
+    merged_df = merged_df.dropna()
+
+    return merged_df
+
