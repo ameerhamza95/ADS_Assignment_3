@@ -140,3 +140,48 @@ def merge_dataframes(df1, df2, suffix1, suffix2):
 
     return merged_df
 
+def plot_correlations(df):
+    """
+    Function that takes a dataframe as input, calculates the 
+    correlation matrix, and plots a heatmap and scatter 
+    matrix of the correlations.
+
+    Parameters:
+    df (pandas.DataFrame): The dataframe to calculate 
+    correlations for and plot.
+
+    Returns:
+    None
+    """
+
+    # Calculate correlation matrix
+    corr = df.corr()
+    print(corr)
+
+    # Plot heatmap of correlation matrix
+    ct.map_corr(df_combine)
+    plt.title('Correlation Matrix Heatmap')
+
+    # Plot scatter matrix of correlations
+    fig, axs = plt.subplots(nrows=len(df.columns), 
+                            ncols=len(df.columns), 
+                            figsize=(10, 10))
+    scatter_matrix = pd.plotting.scatter_matrix(df, ax=axs, 
+                                                s=5, alpha=0.8, 
+                                                diagonal='hist')
+    # set the title
+    plt.suptitle('Correlation Scatter Matrix')
+    plt.tight_layout() # to reduce overlapping
+
+    # Rotate x-labels in scatter matrix
+    for i in range(len(df.columns)):
+        axs[-1, i].set_xlabel(df.columns[i], rotation=90, ha='center', 
+                              va='top')
+        axs[i, 0].set_ylabel(df.columns[i], rotation=0, ha='right', 
+                             va='center')
+        axs[i, 0].yaxis.labelpad = 30
+
+    # Display the plots
+    plt.show()
+    
+    return
