@@ -280,3 +280,77 @@ def plot_clusters(df_cluster, x_col, y_col, year, n):
     # return centers and labels for clusters
     return cen, labels+1
 
+def plot_clusters_with_centers(cen, df_min, df_max, labels, df, col1, 
+                               col2, year, n, ax):
+    """
+    Function that takes in cluster centers, min/max values of 
+    the original dataframe, labels, combined dataframe, 
+    and column names for two columns, and returns a scatter 
+    plot of the data with cluster centers.
+
+    Parameters:
+    cen (numpy.ndarray): The cluster centers as an array of 
+    shape (n, 2).
+    df_min (pandas.Series): A series containing the minimum 
+    values of each column in the original dataframe.
+    df_max (pandas.Series): A series containing the maximum 
+    values of each column in the original dataframe.
+    labels (numpy.ndarray): The cluster labels for each 
+    data point in the combined dataframe.
+    df_combine (pandas.DataFrame): The combined dataframe 
+    with emissions and forest columns.
+    col1 (str): The name of the first column to use as 
+    the x-axis for the plot.
+    col2 (str): The name of the second column to use as 
+    the y-axis for the plot.
+    year (int): The year for which the plot is generated.
+    n (int): The number of clusters.
+    ax (matplotlib.axes.Axes): The axis object to plot the figure on.
+
+    Returns:
+    None
+    """
+
+    # Move the cluster centers to the original scale
+    cen = ct.backscale(cen, df_min, df_max)
+    xcen = cen[:, 0]
+    ycen = cen[:, 1]
+    
+    # Get the counts of each cluster
+    counts = df[labels].value_counts()
+    
+    # Create a dictionary to map cluster numbers to counts
+    count_dict = dict(zip(counts.index, counts.values))
+
+    # Plot the data points and cluster centers
+    cm = plt.cm.get_cmap('tab10')
+    sc = ax.scatter(df[col1], df[col2], 10, c=df[labels].values, 
+                    marker="o", cmap=cm)
+    ax.scatter(xcen, ycen, 45, "k", marker="d")
+    # set xlabel
+    ax.set_xlabel('Greenhouse Emissions (kt of CO2 Eqv.)', 
+                  fontsize=12)
+    # set ylabel
+    ax.set_ylabel('Forest Area (sq. km)', fontsize=12)
+    # set title
+    ax.set_title(f"For year: {year}\n {n} Clusters", fontsize=14, 
+                 weight='bold')
+    # set legend
+    handles, _ = sc.legend_elements()
+    legend_labels = [f"Cluster {label}" for label in range(1, n+1)]
+    ax.legend(handles, legend_labels, title="Cluster")
+    
+    # Add text box with cluster counts
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    textstr = 'No. of countries belonging\nto each cluster:\n\n' + 
+    '\n'.join([f'           Cluster {i+1}: {count_dict.get(i+1, 0)}' \
+               for i in range(n)])
+    ax.text(0.33, 0.98, textstr, transform=ax.transAxes, fontsize=12,
+             verticalalignment='top', bbox=props)
+
+    # Remove the right and top borders
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    
+    return
+
