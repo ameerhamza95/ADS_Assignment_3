@@ -354,3 +354,80 @@ def plot_clusters_with_centers(cen, df_min, df_max, labels, df, col1,
     
     return
 
+def subset_countries(ghg_years_df, forest_years_df):
+    """
+    Subset the input dataframes to include only for countries
+    'China', 'Australia', 'United Kingdom', 'United States', 
+    drop NaN values, and return the resulting dataframes.
+
+    Parameters:
+    -----------
+    df_years_ghg, df_years_forest : pandas.DataFrames
+        Dataframes with row index as years and column 
+        index as country names.
+
+    Returns:
+    --------
+    pandas.DataFrame
+        Dataframe containing the emissions indicator .
+
+    pandas.DataFrame
+        Dataframe containing the forest indicator .
+    """
+    # Subset the dataframe to include only the selected countries
+    emissions = ghg_years_df[['China', 'Australia', 'United Kingdom',
+                              'United States']].copy()
+
+    # Drop rows that have NaN values for any of the years
+    emissions.dropna(inplace=True)
+
+    # Subset the dataframe to include only the forest indicator
+    forest = forest_years_df[['China', 'Australia', 'United Kingdom',
+                              'United States']].copy()
+
+    # Drop rows that have NaN values for any of the years
+    forest.dropna(inplace=True)
+
+    # Keep only the countries 'China', 'Brazil', 'Indonesia',
+    # 'United States' for both dataframes
+    emissions = emissions.loc[:, ['China', 'Australia', 
+                                  'United Kingdom', 'United States']].copy()
+    forest = forest.loc[:, ['China', 'Australia', 
+                            'United Kingdom', 'United States']].copy()
+
+    # return the dataframes
+    return forest, emissions
+
+def merge_years_dataframes(df1, df2, suffix1, suffix2):
+    """
+    Merge two dataframes on years with given suffixes.
+
+    Args:
+    df1 (pd.DataFrame): First dataframe to be merged.
+    df2 (pd.DataFrame): Second dataframe to be merged.
+    suffix1 (str): Suffix to be added to column names of df1.
+    suffix2 (str): Suffix to be added to column names of df2.
+
+    Returns:
+    pd.DataFrame: Merged dataframe with suffixes.
+    """
+    
+    # Drop the second level of multi-index columns from both dataframes
+    df1.columns = df1.columns.droplevel(1)
+    df2.columns = df2.columns.droplevel(1)
+    
+    # Merge the two dataframes on years with the given suffixes for 
+    # the corresponding columns
+    merged_df = pd.merge(df1, df2, on='Years', how='outer', 
+                         suffixes=[suffix1, suffix2])
+
+    # Drop rows with NaN values
+    merged_df = merged_df.dropna()
+    
+    # Resetting index and converting datetime value of years column
+    merged_df = merged_df.reset_index()
+    merged_df["Years"] = pd.to_numeric(merged_df["Years"])
+    
+    # return the merged dataframe
+    return merged_df
+
