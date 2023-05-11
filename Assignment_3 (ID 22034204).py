@@ -185,3 +185,98 @@ def plot_correlations(df):
     plt.show()
     
     return
+
+def calculate_silhouette_score(df, column1, column2):
+    """
+    Function that takes a dataframe and two column names as input,
+    performs KMeans clustering on the selected columns, and returns the
+    silhouette score for each number of clusters along with the minimum
+    and maximum values of the normalized data.
+
+    Parameters:
+    df (pandas.DataFrame): The dataframe to perform clustering on.
+    column1 (str): The name of the first column to use for clustering.
+    column2 (str): The name of the second column to use for clustering.
+
+    Returns:
+    min and max values of normalized data along with normalized dataframe
+    """
+    # select the desired columns
+    cluster_data = df[[column1, column2]].copy()
+    
+    # enforce reload to eliminate multiple calls
+    importlib.reload(ct)
+    
+    # normalize the data
+    cluster_data, df_min, df_max = ct.scaler(cluster_data)
+
+    print("n score")
+
+    # loop over number of clusters
+    for ncluster in range(2, 10):
+        # set up the clusterer with the number of expected clusters
+        kmeans = cluster.KMeans(n_clusters=ncluster)
+
+        # Fit the data, results are stored in the kmeans object
+        kmeans.fit(cluster_data) # fit done on x,y pairs
+
+        # extract labels
+        labels = kmeans.labels_
+
+        # extract the estimated cluster centres
+        cen = kmeans.cluster_centers_
+
+        # calculate the silhouette score
+        print(ncluster, skmet.silhouette_score(cluster_data, labels))
+
+    # return the minimum and maximum values of the normalized data with 
+    # dataframe
+    return df_min, df_max, cluster_data
+
+def plot_clusters(df_cluster, x_col, y_col, year, n):
+    """
+    Function that takes a dataframe, two columns x and y, 
+    and number of clusters n as input, and returns the 
+    cluster centers and a plot of the clusters.
+
+    Parameters:
+    df (pandas.DataFrame): The dataframe to cluster and plot.
+    x_col (str): The name of the column to use as the x-axis for the plot.
+    y_col (str): The name of the column to use as the y-axis for the plot.
+    n (int): The number of clusters to use for k-means clustering.
+    year (int): The year for which to calculate clusters
+    
+    Returns:
+    cen (numpy.ndarray): The cluster centers as an array of shape (n, 2).
+    labels+1: Labels list
+    None
+    """
+
+    # Fit the data to k-means clustering
+    kmeans = cluster.KMeans(n_clusters=n)
+    kmeans.fit(df_cluster)
+    labels = kmeans.labels_  # extract labels
+    cen = kmeans.cluster_centers_  # extract centers
+
+    # Plot the clusters
+    plt.figure(figsize=(8.0, 8.0))
+    cm = plt.cm.get_cmap('tab10')  # define the colormap
+    # plot the values
+    sc = plt.scatter(df_cluster[x_col], df_cluster[y_col],
+                     10, c=labels, marker="o", cmap=cm)
+    plt.scatter(cen[:, 0], cen[:, 1], 45, "k", marker="d")
+    plt.xlabel(x_col)  # set xlabel
+    plt.ylabel(y_col)  # set ylabel
+    # set the title
+    plt.title(f"Greenhouse emissions vs Forest land for year: {year}\n {n} Clusters")
+    # set the legend
+    handles, _ = sc.legend_elements()
+    legend_labels = [f"Cluster {label}" for label in range(1, n+1)]
+    plt.legend(handles, legend_labels, title="Cluster")
+    
+    # display the plot
+    plt.show()
+
+    # return centers and labels for clusters
+    return cen, labels+1
+
