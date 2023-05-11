@@ -664,6 +664,42 @@ df_combine["labels_2019"] = labels_2019
 # Save dataframe to Excel file
 df_combine.to_excel("labeled_data.xlsx", index=True)
 
+# Create the subplots
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(16, 16))
+
+# plotting clusters with centers for the years 1990, 2000, 
+# 2010 and 2019
+plot_clusters_with_centers(cen_1990, df_min1990, df_max1990,
+                           'labels_1990', df_combine, 
+                           "1990_emissions", "1990_forest", 
+                           1990, 7, ax=axes[0, 0])
+plot_clusters_with_centers(cen_2000, df_min2000, df_max2000,
+                           'labels_2000', df_combine, 
+                           "2000_emissions", "2000_forest", 
+                           2000, 6, ax=axes[0, 1])
+plot_clusters_with_centers(cen_2010, df_min2010, df_max2010,
+                           'labels_2010', df_combine, 
+                           "2010_emissions", "2010_forest", 
+                           2010, 6, ax=axes[1, 0])
+plot_clusters_with_centers(cen_2019, df_min2019, df_max2019, 
+                           'labels_2019', df_combine, 
+                           "2019_emissions", "2019_forest", 
+                           2019, 5, ax=axes[1, 1])
+
+# Set the figure face color and edge color
+fig.patch.set_facecolor('#F2F2F2')
+fig.patch.set_edgecolor('grey')
+
+# Set the title
+fig.suptitle('Greenhouse Emissions vs Forest Area showing cluster centers', 
+             fontsize=20, y=0.94, weight='bold')
+
+# Save the figure
+plt.savefig('Clusters.png', dpi=300)
+
+# Display the subplots
+plt.show()
+
 
 
 
