@@ -506,3 +506,88 @@ def bell_curve(x, a, b, c, d):
     # return the calculated function
     return y
 
+def plot_fit(function, df, x_col, y_col, y0, y1, params, title, ylabel,
+             loc, arrow_length, xpos, ypos, units, ax=None):
+    """
+    Plot a fit of a given function to data from a pandas DataFrame.
+
+    Args:
+    - function (callable): the function to fit to the data
+    - df (pandas.DataFrame): the DataFrame containing the data
+    - x_col (str): the name of the column in `df` containing the x data
+    - y_col (str): the name of the column in `df` containing the y data
+    - params (tuple): initial parameter values to pass to `curve_fit`
+    - title (str): the title of the plot
+    - ylabel (str): the label for the y axis
+    - arrow length
+    - xpos (float): x-coordinate for the text box
+    - ypos (float): y-coordinate for the text box
+    - units (str): units for the y-axis
+
+    Returns:
+    - popt (ndarray): the optimal values for the fit parameters
+    """
+
+    # fit the function to the data
+    popt, pcorr = opt.curve_fit(function, df[x_col], df[y_col], p0=params)
+
+    # extract variances and calculate sigmas
+    sigmas = np.sqrt(np.diag(pcorr))
+
+    # create extended year range
+    years = np.arange(y0, y1)
+
+    # call function to calculate upper and lower limits with extrapolation
+    lower, upper = err.err_ranges(years, function, popt, sigmas)
+
+    # plot the data, fit, and error ranges
+    if ax is None:
+        ax = plt.gca()
+
+    # set the title
+    ax.set_title(title, fontsize=14, weight='bold')
+    
+    # plot the functions
+    ax.plot(df[x_col], df[y_col], label="data")
+    ax.plot(years, function(years, *popt), label="fit")
+    ax.fill_between(years, lower, upper, color='y', alpha=0.5)
+
+    # add an arrow to point to the function line with function name
+    bbox_props = dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
+    arrow_props = dict(facecolor='black', arrowstyle="->")
+    ax.annotate(function.__name__ + " fit", xy=(df[x_col].mean() + 20, 
+                function(df[x_col].mean() + 20, *popt)),
+                xytext=(df[x_col].mean() + 15, 
+                function(df[x_col].mean() + 20, *popt) + arrow_length),
+                arrowprops=arrow_props, bbox=bbox_props, fontsize=12)
+
+    # add text box with emissions/land predictions
+    textstr = '\n'.join((
+        'Predictions for:',
+        '2030: {}  +/-  {} e4'\
+            .format(np.round(function(2030, *popt) / 1e4, 2),\
+                    np.round((upper[40]-lower[40]) / 2.0 / 1e4, 2)),
+        '2040: {}  +/-  {} e4'\
+            .format(np.round(function(2040, *popt) / 1e4, 2), \
+                    np.round((upper[50]-lower[50]) / 2.0 / 1e4, 2)),
+        '2050: {}  +/-  {} e4'\
+            .format(np.round(function(2050, *popt) / 1e4, 2), \
+                    np.round((upper[60]-lower[60]) / 2.0 / 1e4, 2)),
+        '\nUnits are in: {}'.format(units)))
+    ax.text(xpos, ypos, textstr, transform=ax.transAxes, fontsize=12, 
+            verticalalignment='top',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+    
+    # set axis labels and legend
+    ax.set_xlabel("Year", fontsize=12)
+    ax.set_ylabel(ylabel, fontsize=12)
+    ax.legend(loc=loc)
+    
+    # Remove the right and top borders
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+
+    # return the calculated parameters
+    return popt
+
+
