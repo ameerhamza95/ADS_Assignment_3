@@ -431,3 +431,78 @@ def merge_years_dataframes(df1, df2, suffix1, suffix2):
     # return the merged dataframe
     return merged_df
 
+def exp_growth(t, scale, growth, t0):
+    """ Computes exponential function with 
+    scale and growth as free parameters
+    """
+    
+    # defining the growth function
+    f = scale * np.exp(growth * (t-t0))
+    
+    # return the calculated function
+    return f
+
+def exp_decay(t, scale, growth, t0):
+    """ Computes exponential function with 
+    scale and growth as free parameters
+    """
+    
+    # defining the decay function
+    f = scale * np.exp(-growth * (t-t0))
+    
+    # return the calculated function
+    return f
+
+def logistics(t, a, k, t0):
+    """ Computes logistics function with 
+    scale and incr as free parameters
+    """
+    
+    # defining the logistics function
+    f = a / (1.0 + np.exp(-k * (t - t0)))
+    
+    # return the calculated function
+    return f
+
+def gaussian(x, a, b, c):
+    """" Computes the gaussian function
+    """"
+    
+    # defining the gaussian function
+    f = a * np.exp(-(x-b)**2/(2*c**2))
+    
+    # return the calculated function
+    return f
+
+def poly(t, c0, c1, c2, c3):
+    """ Computes a polynominal c0 + c1*t + c2*t^2 + c3*t^3
+    """
+    
+    # defining the polynomail function
+    t = t - 1990  # as a starting value
+    f = c0 + c1*t + c2*t**2 + c3*t**3 
+    
+    # return the calculated function
+    return f
+
+def bell_curve(x, a, b, c, d):
+    """
+    Calculates the value of a bell curve function at a given point x.
+
+    Args:
+    - x (float or array-like): the input variable
+    - a (float): the height of the curve's peak
+    - b (float): the position of the peak
+    - c (float): the width of the curve
+    - d (float): the offset of the curve
+
+    Returns:
+    - y (float or array-like): the output value(s) of the function at x
+    """
+    
+    # defining the function
+    y = a * np.exp(-((x - b) / c)**2) + d
+    
+    # return the calculated function
+    return y
+
