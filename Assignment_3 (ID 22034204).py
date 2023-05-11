@@ -25,6 +25,7 @@ import errors as err  # Custom module for calculating error ranges of fitted
                       
 """ Defining Functions """
 
+
 def read_world_health_data(filename):
     """ Define a function that reads in a world health 
     data Excel file and returns two dataframes
@@ -63,6 +64,7 @@ def read_world_health_data(filename):
 
     # Return both dataframes
     return years, countries
+
 
 def subset_indicators(ghg_countries_df, forest_countries_df):
     """
@@ -116,6 +118,7 @@ def subset_indicators(ghg_countries_df, forest_countries_df):
     # Return both dataframes
     return forest, emissions
 
+
 def merge_dataframes(df1, df2, suffix1, suffix2):
     """
     Merge two dataframes on 'Country Name' column with given suffixes.
@@ -138,6 +141,7 @@ def merge_dataframes(df1, df2, suffix1, suffix2):
     merged_df = merged_df.dropna()
 
     return merged_df
+
 
 def plot_correlations(df):
     """
@@ -184,6 +188,7 @@ def plot_correlations(df):
     plt.show()
     
     return
+
 
 def calculate_silhouette_score(df, column1, column2):
     """
@@ -232,6 +237,7 @@ def calculate_silhouette_score(df, column1, column2):
     # dataframe
     return df_min, df_max, cluster_data
 
+
 def plot_clusters(df_cluster, x_col, y_col, year, n):
     """
     Function that takes a dataframe, two columns x and y, 
@@ -278,6 +284,7 @@ def plot_clusters(df_cluster, x_col, y_col, year, n):
 
     # return centers and labels for clusters
     return cen, labels+1
+
 
 def plot_clusters_with_centers(cen, df_min, df_max, labels, df, col1, 
                                col2, year, n, ax):
@@ -353,6 +360,7 @@ def plot_clusters_with_centers(cen, df_min, df_max, labels, df, col1,
     
     return
 
+
 def subset_countries(ghg_years_df, forest_years_df):
     """
     Subset the input dataframes to include only for countries
@@ -397,6 +405,7 @@ def subset_countries(ghg_years_df, forest_years_df):
     # return the dataframes
     return forest, emissions
 
+
 def merge_years_dataframes(df1, df2, suffix1, suffix2):
     """
     Merge two dataframes on years with given suffixes.
@@ -430,6 +439,7 @@ def merge_years_dataframes(df1, df2, suffix1, suffix2):
     # return the merged dataframe
     return merged_df
 
+
 def exp_growth(t, scale, growth, t0):
     """ Computes exponential function with 
     scale and growth as free parameters
@@ -440,6 +450,7 @@ def exp_growth(t, scale, growth, t0):
     
     # return the calculated function
     return f
+
 
 def exp_decay(t, scale, growth, t0):
     """ Computes exponential function with 
@@ -452,6 +463,7 @@ def exp_decay(t, scale, growth, t0):
     # return the calculated function
     return f
 
+
 def logistics(t, a, k, t0):
     """ Computes logistics function with 
     scale and incr as free parameters
@@ -463,6 +475,7 @@ def logistics(t, a, k, t0):
     # return the calculated function
     return f
 
+
 def gaussian(x, a, b, c):
     """ Computes the gaussian function 
     """
@@ -472,6 +485,7 @@ def gaussian(x, a, b, c):
     
     # return the calculated function
     return f
+
 
 def poly(t, c0, c1, c2, c3):
     """ Computes a polynominal 
@@ -484,6 +498,7 @@ def poly(t, c0, c1, c2, c3):
     
     # return the calculated function
     return f
+
 
 def bell_curve(x, a, b, c, d):
     """
@@ -505,6 +520,7 @@ def bell_curve(x, a, b, c, d):
     
     # return the calculated function
     return y
+
 
 def plot_fit(function, df, x_col, y_col, y0, y1, params, title, ylabel,
              loc, arrow_length, xpos, ypos, units, ax=None):
@@ -589,6 +605,7 @@ def plot_fit(function, df, x_col, y_col, y0, y1, params, title, ylabel,
 
     # return the calculated parameters
     return popt
+
 
 """ Main Program """
 
