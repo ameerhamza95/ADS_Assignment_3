@@ -7,8 +7,6 @@ Created on Thu May 11 12:00:48 2023
 
 import pandas as pd   # Library for data manipulation and analysis
 import numpy as np    # Library for numerical computing
-import scipy.stats as stats       # Library for statistical analysis
-import seaborn as sns             # Library for data visualization
 import matplotlib.pyplot as plt   # Library for creating visualizations
 
 # from sklearn import cluster
@@ -40,7 +38,8 @@ def read_world_health_data(filename):
     countries = df.copy()
 
     # Set the index of the dataframe to be a multiindex with 
-    # 'Country Name' as the first level and 'Indicator Name' as the second level
+    # 'Country Name' as the first level and 'Indicator Name' 
+    # as the second level
     countries.set_index(['Country Name', 'Indicator Name'], inplace=True)
     
     # Drop the 'Country Code' and 'Indicator Code' columns
@@ -700,27 +699,121 @@ plt.savefig('Clusters.png', dpi=300)
 # Display the subplots
 plt.show()
 
+# Calling function to subset countries for both dataframes
+df_y_forest, df_y_ghg = subset_countries(df_years_ghg, df_years_forest)
+
+# describe the stats 
+df_y_forest.describe()
+
+# describe the stats 
+df_y_ghg.describe()
+
+# calling to merge the dataframes on years 
+df_merge = merge_years_dataframes(df_y_ghg, df_y_forest, 
+                                  '_emissions', '_forest')
+
+# Create the subplots for China
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(14, 6))
+
+plot_fit(logistics, df_merge, 'Years', 'China_emissions', 
+         1990, 2051, (0.85e7, 0.08, 2008.0),
+         "Greenhouse Emissions over Time", 
+         "Greenhouse Emissions (kt)", "upper left", 
+         0.53e7, 0.4, 0.3, 'kt of CO2 Eqv.', ax=axes[0])
+plot_fit(logistics, df_merge, 'Years', 'China_forest'
+         , 1990, 2051, (1.88e6, 0.01, 2005.0),
+         "Forest Land over Time", "Forest Land (sq. km)", 
+         "upper left", 0.5e6, 0.45, 0.3, 'sq. km', ax=axes[1])
+
+# Set the figure face color and edge color
+fig.patch.set_facecolor('#F2F2F2')
+fig.patch.set_edgecolor('grey')
+
+# Set the title
+fig.suptitle('China: Cluster # 3 Trends with Time', 
+             fontsize=20, y=1, weight='bold')
+
+# Save the figure
+plt.savefig('China.png', dpi=300)
+
+# Display the subplots
+plt.show()      
+
+# Create the subplots for Australia
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(14, 6))
+
+plot_fit(logistics, df_merge, 'Years', 'Australia_emissions',
+         1990, 2051, (5e5, 0.02, 1995.0),
+         "Greenhouse Emissions over Time", "Greenhouse Emissions (kt)",
+         "upper left", 5e4, 0.4, 0.3, 'kt of CO2 Eqv.', ax=axes[0])
+plot_fit(bell_curve, df_merge, 'Years', 'Australia_forest', 
+         1990, 2051, (1.4e6, 2015, 20, 10),
+         "Forest Land over Time", "Forest Land (sq. km)", 
+         "lower left", -1.5e4, 0.45, 0.3, 'sq. km', ax=axes[1])
 
 
+# Set the figure face color and edge color
+fig.patch.set_facecolor('#F2F2F2')
+fig.patch.set_edgecolor('grey')
 
+# Set the title
+fig.suptitle('Australia: Cluster # 1 Trends with Time', 
+             fontsize=20, y=1, weight='bold')
 
+# Save the figure
+plt.savefig('Australia.png', dpi=300)
 
+# Display the subplots
+plt.show()      
 
+# Create the subplots for UK
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(14, 6))
 
+plot_fit(logistics, df_merge, 'Years', 'United Kingdom_emissions', 
+         1990, 2051, (6.5e5, 0.009, 2005),
+         "Greenhouse Emissions over Time", "Greenhouse Emissions (kt)",
+         "lower left", -2.5e5, 0.5, 0.95, 'kt of CO2 Eqv.', ax=axes[0])
+plot_fit(logistics, df_merge, 'Years', 'United Kingdom_forest', 
+         1990, 2051, (3e4, 0.003, 2005),
+         "Forest Land over Time", "Forest Land (sq. km)", "upper left",
+         4e3, 0.5, 0.3, 'sq. km', ax=axes[1])
 
+# Set the figure face color and edge color
+fig.patch.set_facecolor('#F2F2F2')
+fig.patch.set_edgecolor('grey')
 
+# Set the title
+fig.suptitle('United Kingdom: Cluster # 1 Trends with Time', 
+             fontsize=20, y=1, weight='bold')
 
+# Save the figure
+plt.savefig('UK.png', dpi=300)
 
+# Display the subplots
+plt.show()      
 
+# Create the subplots for US
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(14, 6))
 
+plot_fit(bell_curve, df_merge, 'Years', 'United States_emissions', 
+         1990, 2051, (6.8e6, 2000, 30, 0.5),
+         "Greenhouse Emissions over Time", "Greenhouse Emissions (kt)", 
+         "upper left", 5e5, 0.5, 0.95, 'kt of CO2 Eqv.', ax=axes[0])
+plot_fit(poly, df_merge, 'Years', 'United States_forest', 
+         1990, 2051, (3e6, -3.05e3, 521, -11),
+         "Forest Land over Time", "Forest Land (sq. km)", 
+         "lower left", -5e5, 0.3, 0.3, 'sq. km', ax=axes[1])
 
+# Set the figure face color and edge color
+fig.patch.set_facecolor('#F2F2F2')
+fig.patch.set_edgecolor('grey')
 
+# Set the title
+fig.suptitle('United States: Cluster # 5 Trends with Time', 
+             fontsize=20, y=1, weight='bold')
 
+# Save the figure
+plt.savefig('US.png', dpi=300)
 
-
-
-
-
-
-
-
+# Display the subplots
+plt.show()      
