@@ -623,4 +623,68 @@ help(ct)
 # Calling to show plots and print corr matrix
 plot_correlations(df_combine)
 
+# calculate silhouette score for 1990
+df_min1990, df_max1990, df_cluster1990 = \
+    calculate_silhouette_score(df_combine, "1990_emissions", "1990_forest")
+
+# plot cluters and their centers for 1990
+cen_1990, labels_1990 = \
+    plot_clusters(df_cluster1990, "1990_emissions", "1990_forest", 1990, 7)
+
+# calculate silhouette score for 2000
+df_min2000, df_max2000, df_cluster2000 = \
+    calculate_silhouette_score(df_combine, "2000_emissions", "2000_forest")
+    
+# plot cluters and their centers for 2000
+cen_2000, labels_2000 = \
+    plot_clusters(df_cluster2000, "2000_emissions", "2000_forest", 2000, 6)
+
+# calculate silhouette score for 2010
+df_min2010, df_max2010, df_cluster2010 = \
+    calculate_silhouette_score(df_combine, "2010_emissions", "2010_forest")
+
+# plot cluters and their centers for 2010
+cen_2010, labels_2010 = \
+    plot_clusters(df_cluster2010, "2010_emissions", "2010_forest", 2010, 6)
+
+# calculate silhouette score for 2019
+df_min2019, df_max2019, df_cluster2019 = \
+    calculate_silhouette_score(df_combine, "2019_emissions", "2019_forest")
+
+# plot cluters and their centers for 2019
+cen_2019, labels_2019 = \
+    plot_clusters(df_cluster2019, "2019_emissions", "2019_forest", 2019, 5)
+
+# Add labels columns to dataframe
+df_combine["labels_1990"] = labels_1990
+df_combine["labels_2000"] = labels_2000
+df_combine["labels_2010"] = labels_2010
+df_combine["labels_2019"] = labels_2019
+
+# Save dataframe to Excel file
+df_combine.to_excel("labeled_data.xlsx", index=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
