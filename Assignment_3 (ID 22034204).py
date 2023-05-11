@@ -342,8 +342,8 @@ def plot_clusters_with_centers(cen, df_min, df_max, labels, df, col1,
     
     # Add text box with cluster counts
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-    textstr = 'No. of countries belonging\nto each cluster:\n\n' + 
-    '\n'.join([f'           Cluster {i+1}: {count_dict.get(i+1, 0)}' \
+    textstr = 'No. of countries belonging\nto each cluster:\n\n' + \
+        '\n'.join([f'           Cluster {i+1}: {count_dict.get(i+1, 0)}' \
                for i in range(n)])
     ax.text(0.33, 0.98, textstr, transform=ax.transAxes, fontsize=12,
              verticalalignment='top', bbox=props)
@@ -465,8 +465,8 @@ def logistics(t, a, k, t0):
     return f
 
 def gaussian(x, a, b, c):
-    """" Computes the gaussian function
-    """"
+    """ Computes the gaussian function 
+    """
     
     # defining the gaussian function
     f = a * np.exp(-(x-b)**2/(2*c**2))
@@ -475,7 +475,8 @@ def gaussian(x, a, b, c):
     return f
 
 def poly(t, c0, c1, c2, c3):
-    """ Computes a polynominal c0 + c1*t + c2*t^2 + c3*t^3
+    """ Computes a polynominal 
+    c0 + c1*t + c2*t^2 + c3*t^3
     """
     
     # defining the polynomail function
@@ -589,5 +590,37 @@ def plot_fit(function, df, x_col, y_col, y0, y1, params, title, ylabel,
 
     # return the calculated parameters
     return popt
+
+""" Main Program """
+
+# Calling function to read emissions dataframe
+df_years_ghg, df_countries_ghg = \
+    read_world_health_data('Greenhouse emissions.xls')
+    
+# Calling function to read forest area dataframe
+df_years_forest, df_countries_forest = \
+    read_world_health_data('Forest Area.xls')
+
+# Calling the function to subset desired years from both dataframes
+df_forest, df_emissions = subset_indicators(df_countries_ghg, 
+                                            df_countries_forest)
+
+# Perform statistical analysis
+df_forest.describe()
+
+# Perform statistical analysis
+df_emissions.describe()
+
+# Calling the function to merge the dataframes
+df_combine = merge_dataframes(df_emissions, df_forest, '_emissions', '_forest')
+
+# Perform statistical analysis on merged dataframe
+df_combine.describe()
+
+# help on custom module cluster tools
+help(ct)
+
+# Calling to show plots and print corr matrix
+plot_correlations(df_combine)
 
 
